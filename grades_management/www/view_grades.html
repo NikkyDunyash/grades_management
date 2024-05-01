@@ -1,0 +1,36 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+    <link rel="stylesheet" href="style.css">
+    <h1> Grades </h1>
+
+    {% set num = 10 %}
+    {% set fields = ["name1"] %}
+    {% for i in range(num) %}
+        {% set _ = fields.append("item"+(i+1)|str) %} 
+    {% endfor %}    
+
+    {% set rows = frappe.get_all("Grades", fields=fields) %}
+    <table>
+        <tr>
+            <th>name</th>
+            {% for key in list(rows[0].keys())[1:] %}
+                <th>{{ key }}</th>
+            {% endfor %}
+            <th>mean</th>
+        </tr>
+
+        {% for row in rows %}
+            {% set grades = list(row.values())[1:] %}
+            
+            <tr>
+                <td class="name">{{ row.name1 }}</td>
+                {% for grade in grades %}
+                    <td> {{ grade }} </td>
+                {% endfor %}
+                <td> {{ grades | map('float') | sum / num }} </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
